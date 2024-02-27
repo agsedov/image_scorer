@@ -7,6 +7,7 @@ import os.path
 import random
 import codecs
 import time
+import argparse
 
 if sys.version_info[0] == 2:  # Just checking your Python version to import Tkinter properly.
     from Tkinter import *
@@ -14,6 +15,7 @@ else:
     from tkinter import *
 
 from PIL import Image, ImageTk
+
 class ScoreData:
     def  __init__(self,filename, basedir):
         self.filename = filename
@@ -63,6 +65,12 @@ class Fullscreen_Window:
         self.firstImage = True
         self.tk = Tk()
 
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--log', dest='log', type=str, help='Add log')
+        args = parser.parse_args() 
+        logpath = args.log
+        print(logpath)
+
         if os.name == 'nt':
             w, h = self.tk.winfo_screenwidth(), self.tk.winfo_screenheight()
             self.tk.geometry("%dx%d+0+0" % (w, h))
@@ -87,10 +95,10 @@ class Fullscreen_Window:
         self.button_score5 = Button(self.frame, text =u"5", command = self.onscore5, font=(None, 18))
         self.button_score5.grid(row=3, column=4)
 
-#        self.button_yes1 = Button(self.frame, text =u"<- Да", command = self.onyes1, font=(None, 18))
- #       self.button_yes1.grid(row=3, column=0)
- #       self.button_no1  = Button(self.frame, text =u"Нет ->", command = self.onno1, font=(None, 18))
- #       self.button_no1.grid(row=3, column=1)
+        #self.button_yes1 = Button(self.frame, text =u"<- Да", command = self.onyes1, font=(None, 18))
+        #self.button_yes1.grid(row=3, column=0)
+        #self.button_no1  = Button(self.frame, text =u"Нет ->", command = self.onno1, font=(None, 18))
+        #self.button_no1.grid(row=3, column=1)
         #label2 = Label(self.frame, text=config['q'][1], font=(None, 18))
         #label2.grid(row=3,columnspan=2)
         #self.button_yes2 = Button(self.frame, text ="Да", command = self.onyes2, font=(None, 18))
@@ -168,8 +176,8 @@ class Fullscreen_Window:
     #    if(config['time'] > 1000):
     #        return
 
-     #   if(hasattr(self,'timer_id')):
-      #      self.frame.after_cancel(self.timer_id)
+    #    if(hasattr(self,'timer_id')):
+    #      self.frame.after_cancel(self.timer_id)
 
         #self.timer_id = self.frame.after(config['time']*1000, self.forceNextImage)
 
@@ -229,9 +237,15 @@ class Fullscreen_Window:
 
 with codecs.open("./config.json", 'r', 'utf-8') as f:
     config = json.load(f)
-
-data = ScoreData(config['log'], config['database'])
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--log', dest='log', type=str, help='Add log')
+    args = parser.parse_args() 
+    logpath = args.log
+    
+data = ScoreData(logpath, config['database'])
 
 if __name__ == '__main__':
     w = Fullscreen_Window()
     w.tk.mainloop()
+
