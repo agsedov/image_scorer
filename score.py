@@ -15,6 +15,13 @@ else:
     from tkinter import *
 
 from PIL import Image, ImageTk
+from dataclasses import dataclass
+
+@dataclass
+class ButtonData:
+    text: str
+    value: str
+    keybinding: str
 
 class ScoreData:
     def  __init__(self,filename, basedir):
@@ -84,15 +91,18 @@ class Fullscreen_Window:
 
         label1 = Message(self.frame, width=800, pady=25, text=config['q'][0], justify=CENTER, font=(None, 18))
         label1.grid(row=2,columnspan=5)
-        self.button_score1 = Button(self.frame, text =u"1", command = self.onscore1, font=(None, 18))
-        self.button_score1.grid(row=3, column=0)
-        self.button_score2 = Button(self.frame, text =u"2", command = self.onscore2, font=(None, 18))
-        self.button_score2.grid(row=3, column=1)
-        self.button_score3 = Button(self.frame, text =u"3", command = self.onscore3, font=(None, 18))
-        self.button_score3.grid(row=3, column=2)
-        self.button_score4 = Button(self.frame, text =u"4", command = self.onscore4, font=(None, 18))
-        self.button_score4.grid(row=3, column=3)
-        self.button_score5 = Button(self.frame, text =u"5", command = self.onscore5, font=(None, 18))
+        for i in len(buttons):
+            self.button_score = Button(self.frame, text =buttons.text, command = self.onscore(buttons.value), font=(None, 18))
+            self.button_score.grid(row=3, column=0)
+        #self.button_score1 = Button(self.frame, text =u"1", command = self.onscore(1), font=(None, 18))
+        #self.button_score1.grid(row=3, column=0)
+        #self.button_score2 = Button(self.frame, text =u"2", command = self.onscore(2), font=(None, 18))
+        #self.button_score2.grid(row=3, column=1)
+        #self.button_score3 = Button(self.frame, text =u"3", command = self.onscore(3), font=(None, 18))
+        #self.button_score3.grid(row=3, column=2)
+        #self.button_score4 = Button(self.frame, text =u"4", command = self.onscore(4), font=(None, 18))
+        #self.button_score4.grid(row=3, column=3)
+        #self.button_score5 = Button(self.frame, text =u"5", command = self.onscore(5), font=(None, 18))
         self.button_score5.grid(row=3, column=4)
 
         #self.button_yes1 = Button(self.frame, text =u"<- Да", command = self.onyes1, font=(None, 18))
@@ -118,11 +128,14 @@ class Fullscreen_Window:
 
         self.tk.bind("<F11>", self.toggle_fullscreen)
         self.tk.bind("<Escape>", self.end_fullscreen)
-        self.tk.bind("1", self.onscore1)
-        self.tk.bind("2", self.onscore2)
-        self.tk.bind("3", self.onscore3)
-        self.tk.bind("4", self.onscore4)
-        self.tk.bind("5", self.onscore5)
+
+        for i in len(buttons):
+            self.tk.bind(buttons[i].keybinding, self.onscore(buttons[i].value))   
+        #self.tk.bind("1", self.onscore(1))
+        #self.tk.bind("2", self.onscore(2))
+        #self.tk.bind("3", self.onscore(3))
+        #self.tk.bind("4", self.onscore(4))
+        #self.tk.bind("5", self.onscore(5))
         self.tk.focus_set()
 
     def nextImage(self):
@@ -197,16 +210,19 @@ class Fullscreen_Window:
         #if(self.currentState['answer'][1] > -1):
         self.nextImage()
 
-    def onscore1(self, event=None):
-        self.scoreandnext(1)
-    def onscore2(self, event=None):
-        self.scoreandnext(2)
-    def onscore3(self, event=None):
-        self.scoreandnext(3)
-    def onscore4(self, event=None):
-        self.scoreandnext(4)
-    def onscore5(self, event=None):
-        self.scoreandnext(5)
+    def onscore(self, value, event=None):
+        self.scoreandnext(value)
+
+    #def onscore1(self, event=None):
+    #    self.scoreandnext(1)
+    #def onscore2(self, event=None):
+    #    self.scoreandnext(2)
+    #def onscore3(self, event=None):
+    #    self.scoreandnext(3)
+    #def onscore4(self, event=None):
+    #    self.scoreandnext(4)
+    #def onscore5(self, event=None):
+    #    self.scoreandnext(5)
 
     def onyes2(self):
         self.currentState['answer'][0] = 1;
@@ -242,7 +258,15 @@ with codecs.open("./config.json", 'r', 'utf-8') as f:
     parser.add_argument('--log', dest='log', type=str, help='Add log')
     args = parser.parse_args() 
     logpath = args.log
+
+    buttonSettins = (config['keys']).split(",")
+    buttonCount = len(buttonSettins)
+    buttons = []
     
+    for i in buttonCount:
+        button = json.loads(buttonSettins[i])
+        buttons.append(ButtonData(button['text'],button['value'],button['keybinding']))
+
 data = ScoreData(logpath, config['database'])
 
 if __name__ == '__main__':
