@@ -1,6 +1,11 @@
 {
     "time":1000000000,
     "database":"./new_base",
+    "keys":[{"text":"1", "value":1, "keybinding":"1" },
+            {"text":"2", "value":2, "keybinding":"2" },       
+            {"text":"3", "value":3, "keybinding":"3" },
+            {"text":"4", "value":4, "keybinding":"4" },
+            {"text":"5", "value":5, "keybinding":"5" }],
     "log":"./log.txt",
     "message":"",
     "q":["Оцените качество изображения от 1 (наихудшее) до 5 (отличное)"]

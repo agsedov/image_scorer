@@ -8,6 +8,7 @@ import random
 import codecs
 import time
 import argparse
+#import keyboard
 
 if sys.version_info[0] == 2:  # Just checking your Python version to import Tkinter properly.
     from Tkinter import *
@@ -96,6 +97,12 @@ class Fullscreen_Window:
         #self.tk.bind("4", self.onscore(4))
         #self.tk.bind("5", self.onscore(5))
         self.tk.focus_set()
+        #while True:
+        #    try:
+        #        if keyboard.is_pressed('z'):
+        #            self.prevImage
+        #    except:
+        #        break
 
     def nextImage(self):
         if(self.ended):
@@ -143,7 +150,10 @@ class Fullscreen_Window:
 
         print(time.time() - start_time)
         start_time = time.time()
-
+    
+    def prevImage(self):
+        if(hasattr(self,'currentState')):
+            data.setScore(self.currentState['path'], self.currentState[0])             
     #def update_clock(self):
     #    if(config['time'] > 1000):
     #        return
@@ -215,18 +225,37 @@ with codecs.open("./config.json", 'r', 'utf-8') as f:
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--log', dest='log', type=str, help='Add log')
+    parser.add_argument('--cut',action="store_true")
+    parser.add_argument('rows', type = int)
+    parser.add_argument('cols', type = int)
+    parser.add_argument('--cutdir', dest='cutdir' , type = str)
     args = parser.parse_args() 
+    
     logpath = args.log
 
-    buttonSettins = (config['keys']).split(",")
+    buttonSettins = (config['keys'])
+    print(buttonSettins[1]['text'])
     buttonCount = len(buttonSettins)
+    print(buttonCount)
     buttons = []
     
-    for i in buttonCount:
-        button = json.loads(buttonSettins[i])
+    for i in range(buttonCount):
+        button = (buttonSettins[i])
         buttons.append(ButtonData(button['text'],button['value'],button['keybinding']))
 
 data = ScoreData(logpath, config['database'])
+
+if args.cut:
+        im = Image.open(data.filename) 
+        rowcount = args.rows
+        colcount = args.cols
+        rechight = int(im.height/rowcount) 
+        recwight = int(im.width/colcount)
+        for i in range(rowcount):
+            for j in range(colcount):
+                outputIm = im.crop((recwight*j,rechight*i,recwight*(j+1),rechight*(i+1)))
+                outputIm.save(args.cutdir + "\r" + str(i) + "_c" + str(j) + ".png")                
+sys.exit
 
 if __name__ == '__main__':
     w = Fullscreen_Window()

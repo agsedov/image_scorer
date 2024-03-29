@@ -1,3 +1,9 @@
+import os
+import os.path
+import codecs
+import random
+import json
+
 class ScoreData:
     def  __init__(self,filename, basedir):
         self.filename = filename
