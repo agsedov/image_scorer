@@ -51,19 +51,16 @@ class Fullscreen_Window:
 
         label1 = Message(self.frame, width=800, pady=25, text=config['q'][0], justify=CENTER, font=(None, 18))
         label1.grid(row=2,columnspan=5)
-        for i in len(buttons):
-            self.button_score = Button(self.frame, text =buttons.text, command = self.onscore(buttons.value), font=(None, 18))
-            self.button_score.grid(row=3, column=0)
-        #self.button_score1 = Button(self.frame, text =u"1", command = self.onscore(1), font=(None, 18))
-        #self.button_score1.grid(row=3, column=0)
-        #self.button_score2 = Button(self.frame, text =u"2", command = self.onscore(2), font=(None, 18))
-        #self.button_score2.grid(row=3, column=1)
-        #self.button_score3 = Button(self.frame, text =u"3", command = self.onscore(3), font=(None, 18))
-        #self.button_score3.grid(row=3, column=2)
-        #self.button_score4 = Button(self.frame, text =u"4", command = self.onscore(4), font=(None, 18))
-        #self.button_score4.grid(row=3, column=3)
-        #self.button_score5 = Button(self.frame, text =u"5", command = self.onscore(5), font=(None, 18))
-        #self.button_score5.grid(row=3, column=4)
+        self.button_score1 = Button(self.frame, text =buttons[0].text, command = self.onscore(buttons[0].value), font=(None, 18))
+        self.button_score1.grid(row=3, column=0)
+        self.button_score2 = Button(self.frame, text =buttons[1].text, command = self.onscore(buttons[1].value), font=(None, 18))
+        self.button_score2.grid(row=3, column=1)
+        self.button_score3 = Button(self.frame, text =buttons[2].text, command = self.onscore(buttons[2].value), font=(None, 18))
+        self.button_score3.grid(row=3, column=2)
+        self.button_score4 = Button(self.frame, text =buttons[3].text, command = self.onscore(buttons[3].value), font=(None, 18))
+        self.button_score4.grid(row=3, column=3)
+        self.button_score5 = Button(self.frame, text =buttons[4].text, command = self.onscore(buttons[4].value), font=(None, 18))
+        self.button_score5.grid(row=3, column=4)
 
         #self.button_yes1 = Button(self.frame, text =u"<- Да", command = self.onyes1, font=(None, 18))
         #self.button_yes1.grid(row=3, column=0)
@@ -89,7 +86,7 @@ class Fullscreen_Window:
         self.tk.bind("<F11>", self.toggle_fullscreen)
         self.tk.bind("<Escape>", self.end_fullscreen)
 
-        for i in len(buttons):
+        for i in range(len(buttons)):
             self.tk.bind(buttons[i].keybinding, self.onscore(buttons[i].value))   
         #self.tk.bind("1", self.onscore(1))
         #self.tk.bind("2", self.onscore(2))
@@ -225,18 +222,17 @@ with codecs.open("./config.json", 'r', 'utf-8') as f:
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--log', dest='log', type=str, help='Add log')
-    parser.add_argument('--cut',action="store_true")
-    parser.add_argument('rows', type = int)
-    parser.add_argument('cols', type = int)
+    parser.add_argument('--cut', nargs=2)
     parser.add_argument('--cutdir', dest='cutdir' , type = str)
     args = parser.parse_args() 
     
-    logpath = args.log
+    if args.log is None:
+        logpath = os.path.abspath(os.getcwd()) + "log.txt"
+    else:
+        logpath = args.log
 
     buttonSettins = (config['keys'])
-    print(buttonSettins[1]['text'])
     buttonCount = len(buttonSettins)
-    print(buttonCount)
     buttons = []
     
     for i in range(buttonCount):
@@ -245,10 +241,10 @@ with codecs.open("./config.json", 'r', 'utf-8') as f:
 
 data = ScoreData(logpath, config['database'])
 
-if args.cut:
+if args.cut is not None:
         im = Image.open(data.filename) 
-        rowcount = args.rows
-        colcount = args.cols
+        rowcount = args.cut[0]
+        colcount = args.cut[1]
         rechight = int(im.height/rowcount) 
         recwight = int(im.width/colcount)
         for i in range(rowcount):
